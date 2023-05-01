@@ -182,6 +182,7 @@ public class Main {
         return false;
     }
 
+
     public static void placeInBoard(String[][] placingBoard, int[] placeInfo, int sizeOfShip) {
         if (placeInfo[2] == 0) {
             for (int i = 0; i < sizeOfShip; ++i) {
