@@ -189,6 +189,7 @@ public class Main {
                 placingBoard[placeInfo[0] + 1][placeInfo[1] + 1 + i] = "#";
             }
         }
+
         else if (placeInfo[2] == 1) {
             for (int i = 0; i < sizeOfShip; ++i) {
                 placingBoard[placeInfo[0] + 1 + i][placeInfo[1] + 1] = "#";
