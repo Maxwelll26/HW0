@@ -8,6 +8,7 @@ public class Main {
     public static Random rnd;
 
 
+
     //Gets the board sizes and returns the number of rows and columns as an array
     public static int[] getBoardSizes() {
         System.out.println("Enter the board size");
