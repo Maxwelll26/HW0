@@ -443,9 +443,9 @@ public class Main {
         if (gameboardOpponent[hitCoordinates[0] + 1][hitCoordinates[1] + 1].equals("#")) {
             gameBoardGguessing[hitCoordinates[0] + 1][hitCoordinates[1] + 1] = "V";
             // to check if its only hit or drown
-        } else
+        } else{
             gameBoardGguessing[hitCoordinates[0] + 1][hitCoordinates[1] + 1] = "X";
-        System.out.println("That is a miss!");
+            System.out.println("That is a miss!");}
 
     }
 
@@ -481,7 +481,8 @@ public class Main {
             int[] XY = stringToIntArr(XY_CordinansArray);
             System.out.println(XY[0]);
             // checks if the attack valid
-            while ((checkTile(gameBoardGguessing, XY, ID))||(checkTileAlreadyHit(gameBoardGguessing, XY, ID))) {
+            while ((checkTile(gameBoardGguessing, XY, ID))||(checkTileAlreadyHit(gameBoardGguessing, XY, ID)))
+            {   XY_Cordinans = scanner.nextLine();
                 XY_CordinansArray = XY_Cordinans.split(",");
                 XY = stringToIntArr(XY_CordinansArray);
             }
