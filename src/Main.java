@@ -46,6 +46,19 @@ public class Main {
         return new int[][]{num, sizes};
     }
 
+    /**
+     * function that counts how many ships are playing in the game in total
+     * @param numOfShips an int array that we get from the user
+     * @return an int number that tells us how many ships there are in total
+     */
+    public static int getAmountOfShips(int[] numOfShips){
+        int counter=0;
+        for (int indexAmount=0; indexAmount<numOfShips.length;++indexAmount) {
+            counter+=numOfShips[indexAmount];
+        }
+        return counter;
+    }
+
 
     /**
      * function that calculates the number of spaces needed
@@ -146,6 +159,7 @@ public class Main {
             infoInt[i] = Integer.parseInt(infoStr[i]);
         return infoInt;
     }
+
 
     /**
      * side function to help check the orientation if its ligal - 0 or 1
@@ -430,21 +444,69 @@ public class Main {
         }
     }
 
-    public static void hitOrMiss(String[][] gameBoardOpponent, String[][] gameBoardGuessing, int[] hitCoordinates) {
+    /**
+     * function that checks if the tile attack was hit or miss. if in the exact placement was a ship the code will check
+     * firstly if the ship was drowned or only hit. if not - it`s a miss.
+     * we will change the game boards accordingly.
+     * @param gameBoardOpponent - the game board of the current opponent we are checking if there is a ship there.
+     * @param gameBoardGuessing - the guessing game board of the current player to update accordingly.
+     * @param hitCoordinates - what are the hit coordinates to check
+     * @param howManyShips - how many ships in total there are in the game in order to update if one of the ship was drowned.
+     */
+    public static void hitOrMiss(String[][] gameBoardOpponent, String[][] gameBoardGuessing, int[] hitCoordinates, int howManyShips) {
         if (gameBoardOpponent[hitCoordinates[0] + 1][hitCoordinates[1] + 1].equals("#")) {
             gameBoardGuessing[hitCoordinates[0] + 1][hitCoordinates[1] + 1] = "V";
-            System.out.println("That is a hit!");
+
             // to check if its only hit or drown
             if (checkIfDrowned(gameBoardGuessing, hitCoordinates)) {
-                System.out.println("The computer's battleship has been drowned, r more battleships to go!");
+                System.out.println("The computer's battleship has been drowned "+ howManyShips+ " more battleships to go!");
+                --howManyShips;
+                gameBoardGuessing[hitCoordinates[0]+1][hitCoordinates[1]+1]="V";
+                gameBoardOpponent[hitCoordinates[0]+1][hitCoordinates[1]+1]="X";
             }
-        } else {
+            else {
+                //meaning the ship has been attacked so in the guessing board there should be a V and in the
+                // opponent board there should be X
+                System.out.println("that is a hit!");
+                gameBoardGuessing[hitCoordinates[0]+1][hitCoordinates[1]+1]="V";
+                gameBoardOpponent[hitCoordinates[0]+1][hitCoordinates[1]+1]="X";
+            }
+        }
+        else {
             gameBoardGuessing[hitCoordinates[0] + 1][hitCoordinates[1] + 1] = "X";
             System.out.println("That is a miss!");
+
         }
 
     }
+    /*
+    public static boolean checkIfDrownedKeren(String[][] gameBoardGuessing, int[] hitCoordinates,int[]boardSize){
 
+         if(){}
+
+        //The hit coordinantes is not in edges
+        else {
+            // right side - Checking whether there is still a ship on the right side of the hit.
+            // if there is # sign meaning not drown, the loop will run till it gets to the end of the row.
+            for (int indexRunRow = hitCoordinates[1]; indexRunRow < boardSize[0] - hitCoordinates[1]; ++indexRunRow) {
+                if (gameBoardGuessing[hitCoordinates[0] + 1][hitCoordinates[1] + 2] == "#") {
+                    return false;
+                }
+            }
+            // Left side - Checking whether there is still a ship on the right side of the hit.
+            for (int indexRunRow = hitCoordinates[1]; indexRunRow > 0; --indexRunRow) {
+                if (gameBoardGuessing[hitCoordinates[0] + 1][hitCoordinates[1]] == "#") {
+                    return false;
+                }
+            }
+        }
+        // up side - Checking whether there is still a ship on the right side of the hit.
+
+        return ;
+    }
+/**
+
+     */
     public static boolean checkIfDrowned(String[][] gameBoardGuessing, int[] hitCoordinates) {
         if (((gameBoardGuessing[hitCoordinates[0] + 1][hitCoordinates[1]].equals("#") ||
                 (gameBoardGuessing[hitCoordinates[0] + 1][hitCoordinates[1]].equals("V"))) &&
@@ -501,39 +563,59 @@ public class Main {
                 System.out.println("Tile already attacked, try again!");
                 return true;
             }
+            else
+                return true;
         }
         return false;
     }
 
-    public static void attackTurn(String[][] gameBoardOpponent, String[][] gameBoardGuessing, int id, int[] boardSizes) {
+    /**
+     * The function performs the attack on the opponent in turns.The function receives XY values for attack
+     * either by the user or randomly, checks if the input is correct and attacks accordingly.
+     * @param gameBoardOpponent - if the player is the person then the opponent will be the computerGameBoard
+     * @param gameBoardGuessing - the player guessing board
+     * @param currentGameBoard - the player`s current game board
+     * @param ID - to know who is playing right now, the computer (ID=1) or person (ID=1)
+     * @param boardSizes - int array to know the board size for the random function for the computer
+     * @param howManyShipsTotal to know how many ships are in the game for each player to check how much there is
+     *                          left to drown.
+     */
+    public static void attackTurn(String[][] gameBoardOpponent, String[][] gameBoardGuessing, String[][] currentGameBoard,
+                                  int ID, int[] boardSizes,int howManyShipsTotal) {
         //person turn
-        if (id == 0) {
+        if (ID == 0) {
+            System.out.println("Your current game board:");
+            printBoardGame(currentGameBoard);
             System.out.println("Your current guessing board:");
             printBoardGame(gameBoardGuessing);
             System.out.println("Enter a tile to attack");
             String[] XY_Coordinates = (scanner.nextLine()).split(", ");
             int[] XY = stringToIntArr(XY_Coordinates);
-            //System.out.println(XY[0]);
+
             // checks if the attack valid
-            while ((checkTile(gameBoardGuessing, XY, id)) || (checkTileAlreadyHit(gameBoardGuessing, XY, id))) {
+            while ((checkTile(gameBoardGuessing, XY, ID)) || (checkTileAlreadyHit(gameBoardGuessing, XY, ID))) {
                 XY_Coordinates = (scanner.nextLine()).split(", ");
                 XY = stringToIntArr(XY_Coordinates);
             }
-            hitOrMiss(gameBoardOpponent,gameBoardGuessing,XY);
+            hitOrMiss(gameBoardOpponent, gameBoardGuessing, XY, howManyShipsTotal);
+        }
+        //computer turn - ID==1
+        else {
+            System.out.println("Your current game board Computer:");
+            printBoardGame(currentGameBoard);
+            System.out.println("Your current guessing board computer:");
             printBoardGame(gameBoardGuessing);
+            int[] XY_computer = randomVector(boardSizes, 0); // id=0 meaning 2 coordinats only
+            while ((checkTile(gameBoardGuessing, XY_computer, ID)) || (checkTileAlreadyHit(gameBoardGuessing, XY_computer, ID))) {
+                XY_computer = randomVector(boardSizes, 0);
+            }
+            int XComputer=XY_computer[0];
+            int YComputer=XY_computer[1];
 
-            // computer turn
-            // else {
-            //int[] XY = randomVector(boardSizes, 0);
-            //}
+            System.out.println("The computer attacked ("+XComputer+", " +YComputer+")");
+            hitOrMiss(gameBoardOpponent, gameBoardGuessing, XY_computer, howManyShipsTotal);
         }
     }
-
-
-
-
-
-
 
 
     public static void battleshipGame() {
@@ -542,26 +624,46 @@ public class Main {
         int[][] battleShipSizes = getBattleshipSizes();
         int[] numOfShips = battleShipSizes[0];
         int[] sizeOfShips = battleShipSizes[1];
+        int totalShipComputer=getAmountOfShips(numOfShips);
+        int totalShipPlayer=getAmountOfShips(numOfShips);
+        int ID =0; //the ID of the player because he starts the game
         //create boards
         String[][] playerGameBoard = createGameBoard(boardSizes);
         String[][] computerGameBoard = createGameBoard(boardSizes);
         String[][] playerGuessingBoard = createGameBoard(boardSizes);
         String[][] computerGuessingBoard = createGameBoard(boardSizes);
 
+
+        // stage 1 - placement of the ships for the 2 players
         playerBattleShipsPlace(playerGameBoard, boardSizes, numOfShips, sizeOfShips);
         computerBattleshipsPlace(computerGameBoard, boardSizes, numOfShips, sizeOfShips);
-        //printBoardGame(playerGameBoard);
-        printBoardGame(computerGameBoard);
+        printBoardGame(computerGameBoard);// to delet - only for check
 
-        attackTurn(computerGameBoard,playerGuessingBoard,0,boardSizes);
+        //stage 2 - the game itself, attack by turn
+        while (totalShipComputer!=0 || totalShipPlayer!=0) {
+            // Attach by player first
+            if (ID==0){
+                attackTurn(computerGameBoard,playerGuessingBoard,playerGameBoard,ID,boardSizes,totalShipPlayer);
+                ID=1;
+            }
+            //attack by computer
+            else {
+                attackTurn(playerGameBoard,computerGuessingBoard,computerGameBoard,ID,boardSizes,totalShipComputer);
+                ID=0;
+            }
 
+        }
+        //We leave the while loop only in 2 cases:
+        //Or the player managed to sink all the computer's ships meaning "totalShipComputer==0" and then the player won.
+        // or that the computer managed to sink k all the player`s ships meaning "totalShipPlayer==0" and than the
+        // player loses.
+        if (totalShipComputer==0) {
+            System.out.println("You won the game!");
+        }
+        else
+            System.out.println("You lost");
 
-
-
-
-
-
-    }
+   }
 
 
     public static void main(String[] args) throws IOException {
