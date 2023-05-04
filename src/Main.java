@@ -240,15 +240,6 @@ public class Main {
     }
 
     /**
-     * function that checks if from the current placement given the
-     * ship will be adjacent to another battleship
-     * @param placingBoard - the board that is updated only with the real ships that are already placed
-     * @param placeInfo    an int array with the info of placement and cordinates
-     * @param sizeOfShip   - the size of current ship
-     * @return bol statement - true or false
-     */
-
-    /**
      * side function to help check the placement of the ship will be adacent to another ship that is already been
      * placed on the board. the adjacent rules were described in the working manual.
      *
@@ -418,12 +409,12 @@ public class Main {
         String[][] placingBoard = createGameBoard(boardSizes);
         for (int i = 0; i < numOfShips.length; ++i) {
             for (int j = 0; j < numOfShips[i]; ++j) {
-                int[] placeInfoInt = randomVector(boardSizes, 1);
+                int[] placeInfoInt = randomVector(boardSizes, id);
                 while ((checkOrientation(placeInfoInt, id)) || (checkTile(placingBoard, placeInfoInt, id)) ||
                         (checkExcession(placingBoard, placeInfoInt, sizeOfShips[i], id)) ||
                         (checkOverlap(placingBoard, placeInfoInt, sizeOfShips[i], id)) ||
                         (checkAdjacent(placingBoard, placeInfoInt, sizeOfShips[i], id))) {
-                    placeInfoInt = randomVector(boardSizes, 1);
+                    placeInfoInt = randomVector(boardSizes, id);
                 }
                 placeInBoard(placingBoard, placeInfoInt, sizeOfShips[i]);
                 for (int row = 0; row < computerGameBoard.length; ++row) {
@@ -439,14 +430,57 @@ public class Main {
         }
     }
 
-    public static void hitOrMiss(String[][] gameboardOpponent, String[][] gameBoardGguessing, int[] hitCoordinates) {
-        if (gameboardOpponent[hitCoordinates[0] + 1][hitCoordinates[1] + 1].equals("#")) {
-            gameBoardGguessing[hitCoordinates[0] + 1][hitCoordinates[1] + 1] = "V";
+    public static void hitOrMiss(String[][] gameBoardOpponent, String[][] gameBoardGuessing, int[] hitCoordinates) {
+        if (gameBoardOpponent[hitCoordinates[0] + 1][hitCoordinates[1] + 1].equals("#")) {
+            gameBoardGuessing[hitCoordinates[0] + 1][hitCoordinates[1] + 1] = "V";
+            System.out.println("That is a hit!");
             // to check if its only hit or drown
-        } else{
-            gameBoardGguessing[hitCoordinates[0] + 1][hitCoordinates[1] + 1] = "X";
-            System.out.println("That is a miss!");}
+            if (checkIfDrowned(gameBoardGuessing, hitCoordinates)) {
+                System.out.println("The computer's battleship has been drowned, r more battleships to go!");
+            }
+        } else {
+            gameBoardGuessing[hitCoordinates[0] + 1][hitCoordinates[1] + 1] = "X";
+            System.out.println("That is a miss!");
+        }
 
+    }
+
+    public static boolean checkIfDrowned(String[][] gameBoardGuessing, int[] hitCoordinates) {
+        if (((gameBoardGuessing[hitCoordinates[0] + 1][hitCoordinates[1]].equals("#") ||
+                (gameBoardGuessing[hitCoordinates[0] + 1][hitCoordinates[1]].equals("V"))) &&
+                (hitCoordinates[1] - 1 >= 0)) ||
+                ((gameBoardGuessing[hitCoordinates[0] + 1][hitCoordinates[1] + 2].equals("#") ||
+                (gameBoardGuessing[hitCoordinates[0] + 1][hitCoordinates[1] + 2].equals("V"))) &&
+                (hitCoordinates[1] + 1 <= gameBoardGuessing[0].length - 2))) {
+            for (int j = 1; j < gameBoardGuessing[0].length - 1 - hitCoordinates[1]; ++j) {
+                if (gameBoardGuessing[hitCoordinates[0] + 1][hitCoordinates[1] + 1 + j].equals("#") ||
+                        gameBoardGuessing[hitCoordinates[0] + 1][hitCoordinates[1] + 1 + j].equals("–"))
+                    return false;
+            }
+            for (int k = 1; k < hitCoordinates[1] + 1; ++k) {
+                if (gameBoardGuessing[hitCoordinates[0] + 1][hitCoordinates[1] + 1 - k].equals("#") ||
+                        gameBoardGuessing[hitCoordinates[0] + 1][hitCoordinates[1] + 1 - k].equals("–"))
+                    return false;
+            }
+        } else if (((gameBoardGuessing[hitCoordinates[0]][hitCoordinates[1] + 1].equals("#") ||
+                (gameBoardGuessing[hitCoordinates[0]][hitCoordinates[1] + 1].equals("V"))) &&
+                (hitCoordinates[0] - 1 >= 0)) ||
+                ((gameBoardGuessing[hitCoordinates[0] + 2][hitCoordinates[1] + 1].equals("#") ||
+                        (gameBoardGuessing[hitCoordinates[0] + 2][hitCoordinates[1] + 1].equals("V"))) &&
+                        (hitCoordinates[0] + 1 <= gameBoardGuessing.length - 2))) {
+            for (int i = 1; i < gameBoardGuessing.length - 1 - hitCoordinates[0]; ++i) {
+                if (gameBoardGuessing[hitCoordinates[0] + 1 + i][hitCoordinates[1] + 1].equals("#") ||
+                        gameBoardGuessing[hitCoordinates[0] + 1 + i][hitCoordinates[1] + 1].equals("–"))
+                    return false;
+            }
+            for (int k = 1; k < hitCoordinates[0] + 1; ++k) {
+                if (gameBoardGuessing[hitCoordinates[0] + 1 - k][hitCoordinates[1] + 1].equals("#") ||
+                        gameBoardGuessing[hitCoordinates[0] + 1 - k][hitCoordinates[1] + 1].equals("–"))
+                    return false;
+            }
+        } else
+            return true;
+        return true;
     }
 
     /**
@@ -454,40 +488,39 @@ public class Main {
      *
      * @param gameBoardGuessing - the current updated guessing board according to the player
      * @param hitCoordinates    what are the hit hitCoordinates in an inr array.
-     * @param ID                - if the player now is the computer or the person. the ID for the person is 0 and
+     * @param id                - if the player now is the computer or the person. the id for the person is 0 and
      *                          for the computer is 1.
      * @return bol statement - if the tile was already hit - true, else - false.
      */
-    public static boolean checkTileAlreadyHit(String[][] gameBoardGuessing, int[] hitCoordinates, int ID) {
+
+    public static boolean checkTileAlreadyHit(String[][] gameBoardGuessing, int[] hitCoordinates, int id) {
         if (gameBoardGuessing[hitCoordinates[0] + 1][hitCoordinates[1] + 1].equals("X") ||
-                gameBoardGuessing[hitCoordinates[0] + 1][hitCoordinates[1] + 1].equals("v")) {
-            //ID==0 meaning that the player is trying to hit
-            if (ID == 0) {
-                System.out.println("Tile already attacked,try again!");
+                gameBoardGuessing[hitCoordinates[0] + 1][hitCoordinates[1] + 1].equals("V")) {
+            //id=0 meaning that the player is trying to hit
+            if (id == 0) {
+                System.out.println("Tile already attacked, try again!");
                 return true;
             }
         }
         return false;
     }
 
-    public static void attackTurn(String[][] gameboardOpponent, String[][] gameBoardGguessing, int ID, int[] boardSizes) {
+    public static void attackTurn(String[][] gameBoardOpponent, String[][] gameBoardGuessing, int id, int[] boardSizes) {
         //person turn
-        if (ID == 0) {
+        if (id == 0) {
             System.out.println("Your current guessing board:");
-            printBoardGame(gameBoardGguessing);
+            printBoardGame(gameBoardGuessing);
             System.out.println("Enter a tile to attack");
-            String XY_Cordinans = scanner.nextLine();
-            String[] XY_CordinansArray = XY_Cordinans.split(",");
-            int[] XY = stringToIntArr(XY_CordinansArray);
-            System.out.println(XY[0]);
+            String[] XY_Coordinates = (scanner.nextLine()).split(", ");
+            int[] XY = stringToIntArr(XY_Coordinates);
+            //System.out.println(XY[0]);
             // checks if the attack valid
-            while ((checkTile(gameBoardGguessing, XY, ID))||(checkTileAlreadyHit(gameBoardGguessing, XY, ID)))
-            {   XY_Cordinans = scanner.nextLine();
-                XY_CordinansArray = XY_Cordinans.split(",");
-                XY = stringToIntArr(XY_CordinansArray);
+            while ((checkTile(gameBoardGuessing, XY, id)) || (checkTileAlreadyHit(gameBoardGuessing, XY, id))) {
+                XY_Coordinates = (scanner.nextLine()).split(", ");
+                XY = stringToIntArr(XY_Coordinates);
             }
-            hitOrMiss (gameboardOpponent,gameBoardGguessing,XY);
-            printBoardGame(gameBoardGguessing);
+            hitOrMiss(gameBoardOpponent,gameBoardGuessing,XY);
+            printBoardGame(gameBoardGuessing);
 
             // computer turn
             // else {
@@ -510,17 +543,17 @@ public class Main {
         int[] numOfShips = battleShipSizes[0];
         int[] sizeOfShips = battleShipSizes[1];
         //create boards
-        String[][] gameBoardPlayer = createGameBoard(boardSizes);
+        String[][] playerGameBoard = createGameBoard(boardSizes);
         String[][] computerGameBoard = createGameBoard(boardSizes);
-        String[][] playerGuessing = createGameBoard(boardSizes);
-        String[][] computerGuessing = createGameBoard(boardSizes);
+        String[][] playerGuessingBoard = createGameBoard(boardSizes);
+        String[][] computerGuessingBoard = createGameBoard(boardSizes);
 
-        playerBattleShipsPlace(gameBoardPlayer, boardSizes, numOfShips, sizeOfShips);
+        playerBattleShipsPlace(playerGameBoard, boardSizes, numOfShips, sizeOfShips);
         computerBattleshipsPlace(computerGameBoard, boardSizes, numOfShips, sizeOfShips);
-        printBoardGame(gameBoardPlayer);
+        //printBoardGame(playerGameBoard);
         printBoardGame(computerGameBoard);
 
-        attackTurn(computerGameBoard,playerGuessing,0,boardSizes);
+        attackTurn(computerGameBoard,playerGuessingBoard,0,boardSizes);
 
 
 
