@@ -15,7 +15,7 @@ public class Main {
 
     public static int[] getBoardSizes() {
         System.out.println("Enter the board size");
-        scanner = new Scanner(System.in);  //Delete before submitting
+        //scanner = new Scanner(System.in);  //Delete before submitting
         String board_sizes = scanner.nextLine();
         String[] dimensions = board_sizes.split("X");
         int rows = Integer.parseInt(dimensions[0]);
@@ -32,7 +32,7 @@ public class Main {
      * @return a 2 dim array with int
      */
     public static int[][] getBattleshipSizes() {
-        System.out.println("Enter the battleship sizes");
+        System.out.println("Enter the battleships sizes");
         String ships_info = scanner.nextLine();
         String[] ships_num_size = ships_info.split(" ");
         int len = ships_num_size.length;
@@ -340,7 +340,7 @@ public class Main {
      * @return an array with the rand numbers according to who called the function
      */
     public static int[] randomVector(int[] boardSizes, int id) {
-        rnd = new Random();// Delete before submitting
+        //rnd = new Random();// Delete before submitting
         int numRows = boardSizes[0];
         int numCols = boardSizes[1];
         int Xrandom = rnd.nextInt(numRows);
@@ -397,11 +397,10 @@ public class Main {
                     }
                 }
                 placeA(placingBoard, placeInfoInt, sizeOfShips[i]);
-                System.out.println("Your current game board:");
-                printBoardGame(gameBoard);
-
-
-                //System.out.println("Pupip");
+                if (i != numOfShips.length - 1 && j != numOfShips[i] - 1) {
+                    System.out.println("Your current game board:");
+                    printBoardGame(gameBoard);
+                }
             }
         }
     }
@@ -459,7 +458,7 @@ public class Main {
 
             // to check if its only hit or drown
             if (checkIfDrowned(gameBoardOpponent, hitCoordinates)) {
-                System.out.println("that is a hit!");
+                System.out.println("That is a hit!");
                 if (ID == 0) {
                     System.out.println("The computer's battleship has been drowned, " + (howManyShips - 1) + " more battleships to go!");
                 }
@@ -471,7 +470,7 @@ public class Main {
             else {
                 //meaning the ship has been attacked so in the guessing board there should be a V and in the
                 // opponent board there should be X
-                System.out.println("that is a hit!");
+                System.out.println("That is a hit!");
             }
             gameBoardGuessing[hitCoordinates[0]+1][hitCoordinates[1]+1]="V";
             gameBoardOpponent[hitCoordinates[0]+1][hitCoordinates[1]+1]="X";
@@ -600,10 +599,6 @@ public class Main {
         }
         //computer turn - ID==1
         else {
-            System.out.println("Your current game board Computer:");
-            printBoardGame(currentGameBoard);
-            System.out.println("Your current guessing board computer:");
-            printBoardGame(gameBoardGuessing);
             int[] XY_computer = randomVector(boardSizes, 0); // id=0 meaning 2 coordinates only
             while ((checkTile(gameBoardGuessing, XY_computer, ID)) || (checkTileAlreadyHit(gameBoardGuessing, XY_computer, ID))) {
                 XY_computer = randomVector(boardSizes, 0);
