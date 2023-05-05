@@ -609,7 +609,15 @@ public class Main {
         }
     }
 
-
+    /**
+     * The game starts with the input of the size of the board and the number and size of submarines playing in the game
+     * Each player has the number of submarines he has to sink - the number is obtained by using the
+     * function getAmountOfShips()
+     * Each player places his submarines in a place of his choice by the function XBattleshipsPlace
+     * Each player takes turns playing the game, and the game ends when one has managed to sink all the submarines
+     * Each player has his own identification in terms of turns. The ID of the player will be ID=0 and the computer ID=1.
+     * Depending on who wins, a message will be printed.
+     */
     public static void battleshipGame() {
         //get data
         int[] boardSizes = getBoardSizes();
