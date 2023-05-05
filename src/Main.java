@@ -453,24 +453,27 @@ public class Main {
      * @param hitCoordinates - what are the hit coordinates to check
      * @param howManyShips - how many ships in total there are in the game in order to update if one of the ship was drowned.
      */
-    public static void hitOrMiss(String[][] gameBoardOpponent, String[][] gameBoardGuessing, int[] hitCoordinates, int howManyShips) {
+    public static void hitOrMiss(String[][] gameBoardOpponent, String[][] gameBoardGuessing, int[] hitCoordinates, int howManyShips, int ID) {
         if (gameBoardOpponent[hitCoordinates[0] + 1][hitCoordinates[1] + 1].equals("#")) {
             gameBoardGuessing[hitCoordinates[0] + 1][hitCoordinates[1] + 1] = "V";
 
             // to check if its only hit or drown
-            if (checkIfDrowned(gameBoardGuessing, hitCoordinates)) {
-                System.out.println("The computer's battleship has been drowned "+ howManyShips+ " more battleships to go!");
+            if (checkIfDrowned(gameBoardOpponent, hitCoordinates)) {
+                System.out.println("that is a hit!");
+                if (ID == 0)
+                    System.out.println("The computer's battleship has been drowned, "+ howManyShips +" more battleships to go!");
+                else
+                    System.out.println("Your battleship has been drowned, you have left "+ howManyShips +" more battleships!");
+
                 --howManyShips;
-                gameBoardGuessing[hitCoordinates[0]+1][hitCoordinates[1]+1]="V";
-                gameBoardOpponent[hitCoordinates[0]+1][hitCoordinates[1]+1]="X";
             }
             else {
                 //meaning the ship has been attacked so in the guessing board there should be a V and in the
                 // opponent board there should be X
                 System.out.println("that is a hit!");
-                gameBoardGuessing[hitCoordinates[0]+1][hitCoordinates[1]+1]="V";
-                gameBoardOpponent[hitCoordinates[0]+1][hitCoordinates[1]+1]="X";
             }
+            gameBoardGuessing[hitCoordinates[0]+1][hitCoordinates[1]+1]="V";
+            gameBoardOpponent[hitCoordinates[0]+1][hitCoordinates[1]+1]="X";
         }
         else {
             gameBoardGuessing[hitCoordinates[0] + 1][hitCoordinates[1] + 1] = "X";
@@ -561,10 +564,8 @@ public class Main {
             //id=0 meaning that the player is trying to hit
             if (id == 0) {
                 System.out.println("Tile already attacked, try again!");
-                return true;
             }
-            else
-                return true;
+            return true;
         }
         return false;
     }
@@ -597,7 +598,7 @@ public class Main {
                 XY_Coordinates = (scanner.nextLine()).split(", ");
                 XY = stringToIntArr(XY_Coordinates);
             }
-            hitOrMiss(gameBoardOpponent, gameBoardGuessing, XY, howManyShipsTotal);
+            hitOrMiss(gameBoardOpponent, gameBoardGuessing, XY, howManyShipsTotal, ID);
         }
         //computer turn - ID==1
         else {
@@ -613,7 +614,7 @@ public class Main {
             int YComputer=XY_computer[1];
 
             System.out.println("The computer attacked ("+XComputer+", " +YComputer+")");
-            hitOrMiss(gameBoardOpponent, gameBoardGuessing, XY_computer, howManyShipsTotal);
+            hitOrMiss(gameBoardOpponent, gameBoardGuessing, XY_computer, howManyShipsTotal, ID);
         }
     }
 
@@ -644,12 +645,12 @@ public class Main {
             // Attach by player first
             if (ID==0){
                 attackTurn(computerGameBoard,playerGuessingBoard,playerGameBoard,ID,boardSizes,totalShipPlayer);
-                ID=1;
+                ID++;
             }
             //attack by computer
             else {
                 attackTurn(playerGameBoard,computerGuessingBoard,computerGameBoard,ID,boardSizes,totalShipComputer);
-                ID=0;
+                ID--;
             }
 
         }
