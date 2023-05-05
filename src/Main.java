@@ -453,19 +453,20 @@ public class Main {
      * @param hitCoordinates - what are the hit coordinates to check
      * @param howManyShips - how many ships in total there are in the game in order to update if one of the ship was drowned.
      */
-    public static void hitOrMiss(String[][] gameBoardOpponent, String[][] gameBoardGuessing, int[] hitCoordinates, int howManyShips, int ID) {
+    public static boolean hitOrMiss(String[][] gameBoardOpponent, String[][] gameBoardGuessing, int[] hitCoordinates, int howManyShips, int ID) {
         if (gameBoardOpponent[hitCoordinates[0] + 1][hitCoordinates[1] + 1].equals("#")) {
             gameBoardGuessing[hitCoordinates[0] + 1][hitCoordinates[1] + 1] = "V";
 
             // to check if its only hit or drown
             if (checkIfDrowned(gameBoardOpponent, hitCoordinates)) {
                 System.out.println("that is a hit!");
-                if (ID == 0)
-                    System.out.println("The computer's battleship has been drowned, "+ howManyShips +" more battleships to go!");
-                else
-                    System.out.println("Your battleship has been drowned, you have left "+ howManyShips +" more battleships!");
-
-                --howManyShips;
+                if (ID == 0) {
+                    System.out.println("The computer's battleship has been drowned, " + (howManyShips - 1) + " more battleships to go!");
+                }
+                else {
+                    System.out.println("Your battleship has been drowned, you have left " + (howManyShips - 1) + " more battleships!");
+                }
+                return true;
             }
             else {
                 //meaning the ship has been attacked so in the guessing board there should be a V and in the
@@ -474,13 +475,14 @@ public class Main {
             }
             gameBoardGuessing[hitCoordinates[0]+1][hitCoordinates[1]+1]="V";
             gameBoardOpponent[hitCoordinates[0]+1][hitCoordinates[1]+1]="X";
+            return false;
         }
         else {
             gameBoardGuessing[hitCoordinates[0] + 1][hitCoordinates[1] + 1] = "X";
             System.out.println("That is a miss!");
 
         }
-
+        return false;
     }
     /*
     public static boolean checkIfDrownedKeren(String[][] gameBoardGuessing, int[] hitCoordinates,int[]boardSize){
@@ -511,12 +513,10 @@ public class Main {
 
      */
     public static boolean checkIfDrowned(String[][] gameBoardGuessing, int[] hitCoordinates) {
-        if (((gameBoardGuessing[hitCoordinates[0] + 1][hitCoordinates[1]].equals("#") ||
-                (gameBoardGuessing[hitCoordinates[0] + 1][hitCoordinates[1]].equals("V"))) &&
-                (hitCoordinates[1] - 1 >= 0)) ||
-                ((gameBoardGuessing[hitCoordinates[0] + 1][hitCoordinates[1] + 2].equals("#") ||
-                (gameBoardGuessing[hitCoordinates[0] + 1][hitCoordinates[1] + 2].equals("V"))) &&
-                (hitCoordinates[1] + 1 <= gameBoardGuessing[0].length - 2))) {
+        if (((hitCoordinates[1] - 1 >= 0) && (gameBoardGuessing[hitCoordinates[0] + 1][hitCoordinates[1]].equals("#") ||
+                (gameBoardGuessing[hitCoordinates[0] + 1][hitCoordinates[1]].equals("V")))) ||
+                ((hitCoordinates[1] + 1 <= gameBoardGuessing[0].length - 2) && (gameBoardGuessing[hitCoordinates[0] + 1][hitCoordinates[1] + 2].equals("#") ||
+                (gameBoardGuessing[hitCoordinates[0] + 1][hitCoordinates[1] + 2].equals("V"))))) {
             for (int j = 1; j < gameBoardGuessing[0].length - 1 - hitCoordinates[1]; ++j) {
                 if (gameBoardGuessing[hitCoordinates[0] + 1][hitCoordinates[1] + 1 + j].equals("#") ||
                         gameBoardGuessing[hitCoordinates[0] + 1][hitCoordinates[1] + 1 + j].equals("–"))
@@ -527,12 +527,10 @@ public class Main {
                         gameBoardGuessing[hitCoordinates[0] + 1][hitCoordinates[1] + 1 - k].equals("–"))
                     return false;
             }
-        } else if (((gameBoardGuessing[hitCoordinates[0]][hitCoordinates[1] + 1].equals("#") ||
-                (gameBoardGuessing[hitCoordinates[0]][hitCoordinates[1] + 1].equals("V"))) &&
-                (hitCoordinates[0] - 1 >= 0)) ||
-                ((gameBoardGuessing[hitCoordinates[0] + 2][hitCoordinates[1] + 1].equals("#") ||
-                        (gameBoardGuessing[hitCoordinates[0] + 2][hitCoordinates[1] + 1].equals("V"))) &&
-                        (hitCoordinates[0] + 1 <= gameBoardGuessing.length - 2))) {
+        } else if (((hitCoordinates[0] - 1 >= 0) && (gameBoardGuessing[hitCoordinates[0]][hitCoordinates[1] + 1].equals("#") ||
+                (gameBoardGuessing[hitCoordinates[0]][hitCoordinates[1] + 1].equals("V")))) ||
+                ((hitCoordinates[0] + 1 <= gameBoardGuessing.length - 2) && (gameBoardGuessing[hitCoordinates[0] + 2][hitCoordinates[1] + 1].equals("#") ||
+                        (gameBoardGuessing[hitCoordinates[0] + 2][hitCoordinates[1] + 1].equals("V"))))) {
             for (int i = 1; i < gameBoardGuessing.length - 1 - hitCoordinates[0]; ++i) {
                 if (gameBoardGuessing[hitCoordinates[0] + 1 + i][hitCoordinates[1] + 1].equals("#") ||
                         gameBoardGuessing[hitCoordinates[0] + 1 + i][hitCoordinates[1] + 1].equals("–"))
@@ -581,7 +579,7 @@ public class Main {
      * @param howManyShipsTotal to know how many ships are in the game for each player to check how much there is
      *                          left to drown.
      */
-    public static void attackTurn(String[][] gameBoardOpponent, String[][] gameBoardGuessing, String[][] currentGameBoard,
+    public static boolean attackTurn(String[][] gameBoardOpponent, String[][] gameBoardGuessing, String[][] currentGameBoard,
                                   int ID, int[] boardSizes,int howManyShipsTotal) {
         //person turn
         if (ID == 0) {
@@ -598,7 +596,7 @@ public class Main {
                 XY_Coordinates = (scanner.nextLine()).split(", ");
                 XY = stringToIntArr(XY_Coordinates);
             }
-            hitOrMiss(gameBoardOpponent, gameBoardGuessing, XY, howManyShipsTotal, ID);
+            return hitOrMiss(gameBoardOpponent, gameBoardGuessing, XY, howManyShipsTotal, ID);
         }
         //computer turn - ID==1
         else {
@@ -606,7 +604,7 @@ public class Main {
             printBoardGame(currentGameBoard);
             System.out.println("Your current guessing board computer:");
             printBoardGame(gameBoardGuessing);
-            int[] XY_computer = randomVector(boardSizes, 0); // id=0 meaning 2 coordinats only
+            int[] XY_computer = randomVector(boardSizes, 0); // id=0 meaning 2 coordinates only
             while ((checkTile(gameBoardGuessing, XY_computer, ID)) || (checkTileAlreadyHit(gameBoardGuessing, XY_computer, ID))) {
                 XY_computer = randomVector(boardSizes, 0);
             }
@@ -614,7 +612,7 @@ public class Main {
             int YComputer=XY_computer[1];
 
             System.out.println("The computer attacked ("+XComputer+", " +YComputer+")");
-            hitOrMiss(gameBoardOpponent, gameBoardGuessing, XY_computer, howManyShipsTotal, ID);
+            return hitOrMiss(gameBoardOpponent, gameBoardGuessing, XY_computer, howManyShipsTotal, ID);
         }
     }
 
@@ -638,21 +636,21 @@ public class Main {
         // stage 1 - placement of the ships for the 2 players
         playerBattleShipsPlace(playerGameBoard, boardSizes, numOfShips, sizeOfShips);
         computerBattleshipsPlace(computerGameBoard, boardSizes, numOfShips, sizeOfShips);
-        printBoardGame(computerGameBoard);// to delet - only for check
 
         //stage 2 - the game itself, attack by turn
-        while (totalShipComputer!=0 || totalShipPlayer!=0) {
+        while (totalShipComputer > 0 && totalShipPlayer > 0) {
             // Attach by player first
             if (ID==0){
-                attackTurn(computerGameBoard,playerGuessingBoard,playerGameBoard,ID,boardSizes,totalShipPlayer);
+                if (attackTurn(computerGameBoard,playerGuessingBoard,playerGameBoard,ID,boardSizes,totalShipComputer))
+                    --totalShipComputer;
                 ID++;
             }
             //attack by computer
             else {
-                attackTurn(playerGameBoard,computerGuessingBoard,computerGameBoard,ID,boardSizes,totalShipComputer);
+                if (attackTurn(playerGameBoard,computerGuessingBoard,computerGameBoard,ID,boardSizes,totalShipPlayer))
+                    --totalShipPlayer;
                 ID--;
             }
-
         }
         //We leave the while loop only in 2 cases:
         //Or the player managed to sink all the computer's ships meaning "totalShipComputer==0" and then the player won.
@@ -662,7 +660,7 @@ public class Main {
             System.out.println("You won the game!");
         }
         else
-            System.out.println("You lost");
+            System.out.println("You lost ):");
 
    }
 
