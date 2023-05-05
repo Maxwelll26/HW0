@@ -341,10 +341,8 @@ public class Main {
      */
     public static int[] randomVector(int[] boardSizes, int id) {
         //rnd = new Random();// Delete before submitting
-        int numRows = boardSizes[0];
-        int numCols = boardSizes[1];
-        int Xrandom = rnd.nextInt(numRows);
-        int Yrandom = rnd.nextInt(numCols);
+        int Xrandom = rnd.nextInt(boardSizes[0]);
+        int Yrandom = rnd.nextInt(boardSizes[1]);
         int orientationRandom = rnd.nextInt(2);
         //id==0 meaning the computer called the function for 2 coordinates to hit the opponent
         if (id == 0)
