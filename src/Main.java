@@ -15,7 +15,6 @@ public class Main {
 
     public static int[] getBoardSizes() {
         System.out.println("Enter the board size");
-        //scanner = new Scanner(System.in);  //Delete before submitting
         String board_sizes = scanner.nextLine();
         String[] dimensions = board_sizes.split("X");
         int rows = Integer.parseInt(dimensions[0]);
@@ -343,14 +342,16 @@ public class Main {
         //rnd = new Random();// Delete before submitting
         int Xrandom = rnd.nextInt(boardSizes[0]);
         int Yrandom = rnd.nextInt(boardSizes[1]);
-        int orientationRandom = rnd.nextInt(2);
+     //   int orientationRandom = rnd.nextInt(2);
         //id==0 meaning the computer called the function for 2 coordinates to hit the opponent
         if (id == 0)
             return new int[]{Xrandom, Yrandom};
 
             // else - meaning the computer called the function for placing the ship in the board
-        else
+        else {
+            int orientationRandom = rnd.nextInt(2);
             return new int[]{Xrandom, Yrandom, orientationRandom};
+        }
     }
 
     /**
@@ -395,7 +396,7 @@ public class Main {
                     }
                 }
                 placeA(placingBoard, placeInfoInt, sizeOfShips[i]);
-                if (i != numOfShips.length - 1 && j != numOfShips[i] - 1) {
+                if (i != numOfShips.length - 1 && j != numOfShips[i]) {
                     System.out.println("Your current game board:");
                     printBoardGame(gameBoard);
                 }
@@ -453,6 +454,7 @@ public class Main {
     public static boolean hitOrMiss(String[][] gameBoardOpponent, String[][] gameBoardGuessing, int[] hitCoordinates, int howManyShips, int ID) {
         if (gameBoardOpponent[hitCoordinates[0] + 1][hitCoordinates[1] + 1].equals("#")) {
             gameBoardGuessing[hitCoordinates[0] + 1][hitCoordinates[1] + 1] = "V";
+            gameBoardOpponent[hitCoordinates[0] + 1][hitCoordinates[1] + 1] = "X";
 
             // to check if its only hit or drown
             if (checkIfDrowned(gameBoardOpponent, hitCoordinates)) {
@@ -470,8 +472,8 @@ public class Main {
                 // opponent board there should be X
                 System.out.println("That is a hit!");
             }
-            gameBoardGuessing[hitCoordinates[0]+1][hitCoordinates[1]+1]="V";
-            gameBoardOpponent[hitCoordinates[0]+1][hitCoordinates[1]+1]="X";
+            //gameBoardGuessing[hitCoordinates[0]+1][hitCoordinates[1]+1]="V";
+            //gameBoardOpponent[hitCoordinates[0]+1][hitCoordinates[1]+1]="X";
             return false;
         }
         else {
@@ -509,37 +511,36 @@ public class Main {
 /**
 
      */
-    public static boolean checkIfDrowned(String[][] gameBoardGuessing, int[] hitCoordinates) {
-        if (((hitCoordinates[1] - 1 >= 0) && (gameBoardGuessing[hitCoordinates[0] + 1][hitCoordinates[1]].equals("#") ||
-                (gameBoardGuessing[hitCoordinates[0] + 1][hitCoordinates[1]].equals("V")))) ||
-                ((hitCoordinates[1] + 1 <= gameBoardGuessing[0].length - 2) && (gameBoardGuessing[hitCoordinates[0] + 1][hitCoordinates[1] + 2].equals("#") ||
-                (gameBoardGuessing[hitCoordinates[0] + 1][hitCoordinates[1] + 2].equals("V"))))) {
-            for (int j = 1; j < gameBoardGuessing[0].length - 1 - hitCoordinates[1]; ++j) {
-                if (gameBoardGuessing[hitCoordinates[0] + 1][hitCoordinates[1] + 1 + j].equals("#") ||
-                        gameBoardGuessing[hitCoordinates[0] + 1][hitCoordinates[1] + 1 + j].equals("–"))
+    public static boolean checkIfDrowned(String[][] gameBoardOpponent, int[] hitCoordinates) {
+        //if the ship is horizontal
+        if (((hitCoordinates[1] - 1 >= 0) && (gameBoardOpponent[hitCoordinates[0] + 1][hitCoordinates[1]].equals("#") ||
+                (gameBoardOpponent[hitCoordinates[0] + 1][hitCoordinates[1]].equals("X")))) ||
+                ((hitCoordinates[1] + 1 <= gameBoardOpponent[0].length - 2) && (gameBoardOpponent[hitCoordinates[0] + 1][hitCoordinates[1] + 2].equals("#") ||
+                (gameBoardOpponent[hitCoordinates[0] + 1][hitCoordinates[1] + 2].equals("X"))))) {
+            //checks the right side of the tile
+            for (int j = 1; j < gameBoardOpponent[0].length - 1 - hitCoordinates[1]; ++j) {
+                if (gameBoardOpponent[hitCoordinates[0] + 1][hitCoordinates[1] + 1 + j].equals("#"))
                     return false;
             }
+            //checks the left side of the tile
             for (int k = 1; k < hitCoordinates[1] + 1; ++k) {
-                if (gameBoardGuessing[hitCoordinates[0] + 1][hitCoordinates[1] + 1 - k].equals("#") ||
-                        gameBoardGuessing[hitCoordinates[0] + 1][hitCoordinates[1] + 1 - k].equals("–"))
+                if (gameBoardOpponent[hitCoordinates[0] + 1][hitCoordinates[1] + 1 - k].equals("#"))
                     return false;
             }
-        } else if (((hitCoordinates[0] - 1 >= 0) && (gameBoardGuessing[hitCoordinates[0]][hitCoordinates[1] + 1].equals("#") ||
-                (gameBoardGuessing[hitCoordinates[0]][hitCoordinates[1] + 1].equals("V")))) ||
-                ((hitCoordinates[0] + 1 <= gameBoardGuessing.length - 2) && (gameBoardGuessing[hitCoordinates[0] + 2][hitCoordinates[1] + 1].equals("#") ||
-                        (gameBoardGuessing[hitCoordinates[0] + 2][hitCoordinates[1] + 1].equals("V"))))) {
-            for (int i = 1; i < gameBoardGuessing.length - 1 - hitCoordinates[0]; ++i) {
-                if (gameBoardGuessing[hitCoordinates[0] + 1 + i][hitCoordinates[1] + 1].equals("#") ||
-                        gameBoardGuessing[hitCoordinates[0] + 1 + i][hitCoordinates[1] + 1].equals("–"))
+            //if the ship is vertical
+        } else if (((hitCoordinates[0] - 1 >= 0) && (gameBoardOpponent[hitCoordinates[0]][hitCoordinates[1] + 1].equals("#") ||
+                (gameBoardOpponent[hitCoordinates[0]][hitCoordinates[1] + 1].equals("X")))) ||
+                ((hitCoordinates[0] + 1 <= gameBoardOpponent.length - 2) && (gameBoardOpponent[hitCoordinates[0] + 2][hitCoordinates[1] + 1].equals("#") ||
+                        (gameBoardOpponent[hitCoordinates[0] + 2][hitCoordinates[1] + 1].equals("X"))))) {
+            for (int i = 1; i < gameBoardOpponent.length - 1 - hitCoordinates[0]; ++i) {
+                if (gameBoardOpponent[hitCoordinates[0] + 1 + i][hitCoordinates[1] + 1].equals("#"))
                     return false;
             }
             for (int k = 1; k < hitCoordinates[0] + 1; ++k) {
-                if (gameBoardGuessing[hitCoordinates[0] + 1 - k][hitCoordinates[1] + 1].equals("#") ||
-                        gameBoardGuessing[hitCoordinates[0] + 1 - k][hitCoordinates[1] + 1].equals("–"))
+                if (gameBoardOpponent[hitCoordinates[0] + 1 - k][hitCoordinates[1] + 1].equals("#"))
                     return false;
             }
-        } else
-            return true;
+        }
         return true;
     }
 
@@ -660,9 +661,11 @@ public class Main {
         if (totalShipComputer==0) {
             System.out.println("You won the game!");
         }
-        else
+        else {
+            System.out.println("Your current game board:");
+            printBoardGame(playerGameBoard);
             System.out.println("You lost ):");
-
+        }
    }
 
 
