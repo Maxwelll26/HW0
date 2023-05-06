@@ -620,6 +620,7 @@ public class Main {
         return true;
     }
 
+
     /**
      * checks if the tile was already been hit
      *
