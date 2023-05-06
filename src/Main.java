@@ -512,6 +512,7 @@ public class Main {
 
      */
     public static boolean checkIfDrowned(String[][] gameBoardOpponent, int[] hitCoordinates) {
+        int index = 0;
         //if the ship is horizontal
         if (((hitCoordinates[1] - 1 >= 0) && (gameBoardOpponent[hitCoordinates[0] + 1][hitCoordinates[1]].equals("#") ||
                 (gameBoardOpponent[hitCoordinates[0] + 1][hitCoordinates[1]].equals("X")))) ||
@@ -519,28 +520,103 @@ public class Main {
                 (gameBoardOpponent[hitCoordinates[0] + 1][hitCoordinates[1] + 2].equals("X"))))) {
             //checks the right side of the tile
             for (int j = 1; j < gameBoardOpponent[0].length - 1 - hitCoordinates[1]; ++j) {
-                if (gameBoardOpponent[hitCoordinates[0] + 1][hitCoordinates[1] + 1 + j].equals("#"))
-                    return false;
+                if (hitCoordinates[1] == gameBoardOpponent[0].length - 3) {
+                    if (gameBoardOpponent[hitCoordinates[0] + 1][hitCoordinates[1] + 1 + j].equals("#"))
+                        return false;
+                    else if ((gameBoardOpponent[hitCoordinates[0] + 1][hitCoordinates[1] + 1 + j].equals("X") &&
+                            !gameBoardOpponent[hitCoordinates[0] + 1][hitCoordinates[1] + j].equals("–"))) {
+                        //++index;
+                        break;
+                    }
+                }
+                else {
+                    if (gameBoardOpponent[hitCoordinates[0] + 1][hitCoordinates[1] + 1 + j].equals("#"))
+                        return false;
+                    else if ((gameBoardOpponent[hitCoordinates[0] + 1][hitCoordinates[1] + 1 + j].equals("–") &&
+                            !gameBoardOpponent[hitCoordinates[0] + 1][hitCoordinates[1] + j].equals("–"))) {
+                        //++index;
+                        break;
+                    }
+                }
             }
             //checks the left side of the tile
             for (int k = 1; k < hitCoordinates[1] + 1; ++k) {
-                if (gameBoardOpponent[hitCoordinates[0] + 1][hitCoordinates[1] + 1 - k].equals("#"))
-                    return false;
+                if (hitCoordinates[1] == 1) {
+                    if (gameBoardOpponent[hitCoordinates[0] + 1][hitCoordinates[1] + 1 - k].equals("#"))
+                        return false;
+                    else if ((gameBoardOpponent[hitCoordinates[0] + 1][hitCoordinates[1] + 1 - k].equals("X") &&
+                            !gameBoardOpponent[hitCoordinates[0] + 1][hitCoordinates[1] + 2 - k].equals("–"))) {
+                        //++index;
+                        //if (index == 2)
+                        return true;
+                    }
+                }
+                else {
+                    if (gameBoardOpponent[hitCoordinates[0] + 1][hitCoordinates[1] + 1 - k].equals("#"))
+                        return false;
+                    else if ((gameBoardOpponent[hitCoordinates[0] + 1][hitCoordinates[1] + 1 - k].equals("–") &&
+                            !gameBoardOpponent[hitCoordinates[0] + 1][hitCoordinates[1] + 2 - k].equals("–"))) {
+                        //++index;
+                        //if (index == 2)
+                        return true;
+                    }
+                }
             }
+            return false;
             //if the ship is vertical
         } else if (((hitCoordinates[0] - 1 >= 0) && (gameBoardOpponent[hitCoordinates[0]][hitCoordinates[1] + 1].equals("#") ||
                 (gameBoardOpponent[hitCoordinates[0]][hitCoordinates[1] + 1].equals("X")))) ||
                 ((hitCoordinates[0] + 1 <= gameBoardOpponent.length - 2) && (gameBoardOpponent[hitCoordinates[0] + 2][hitCoordinates[1] + 1].equals("#") ||
                         (gameBoardOpponent[hitCoordinates[0] + 2][hitCoordinates[1] + 1].equals("X"))))) {
             for (int i = 1; i < gameBoardOpponent.length - 1 - hitCoordinates[0]; ++i) {
-                if (gameBoardOpponent[hitCoordinates[0] + 1 + i][hitCoordinates[1] + 1].equals("#"))
-                    return false;
+                if (hitCoordinates[0] == gameBoardOpponent.length - 3) {
+                    if (gameBoardOpponent[hitCoordinates[0] + 1 + i][hitCoordinates[1] + 1].equals("#"))
+                        return false;
+                    else if ((gameBoardOpponent[hitCoordinates[0] + 1 + i][hitCoordinates[1] + 1].equals("X") &&
+                            !gameBoardOpponent[hitCoordinates[0] + i][hitCoordinates[1] + 1].equals("–")) ||
+                            (gameBoardOpponent[hitCoordinates[0] + 1 + i][hitCoordinates[1] + 1].equals("–") &&
+                                    !gameBoardOpponent[hitCoordinates[0] + i][hitCoordinates[1] + 1].equals("–"))) {
+                        //++index;
+                        break;
+                    }
+                }
+                else {
+                    if (gameBoardOpponent[hitCoordinates[0] + 1 + i][hitCoordinates[1] + 1].equals("#"))
+                        return false;
+                    else if ((gameBoardOpponent[hitCoordinates[0] + 1 + i][hitCoordinates[1] + 1].equals("–") &&
+                            !gameBoardOpponent[hitCoordinates[0] + i][hitCoordinates[1] + 1].equals("–"))) {
+                        //++index;
+                        break;
+                    }
+                }
             }
             for (int k = 1; k < hitCoordinates[0] + 1; ++k) {
-                if (gameBoardOpponent[hitCoordinates[0] + 1 - k][hitCoordinates[1] + 1].equals("#"))
-                    return false;
+                if (hitCoordinates[0] == 1) {
+                    if (gameBoardOpponent[hitCoordinates[0] + 1 - k][hitCoordinates[1] + 1].equals("#"))
+                        return false;
+                    else if ((gameBoardOpponent[hitCoordinates[0] + 1 - k][hitCoordinates[1] + 1].equals("X") &&
+                            !gameBoardOpponent[hitCoordinates[0] + 2 - k][hitCoordinates[1] + 1].equals("–")) ||
+                            (gameBoardOpponent[hitCoordinates[0] + 1 - k][hitCoordinates[1] + 1].equals("–") &&
+                                    !gameBoardOpponent[hitCoordinates[0] + 2 - k][hitCoordinates[1] + 1].equals("–"))) {
+                        //++index;
+                        //if (index == 2)
+                        return true;
+                    }
+                }
+                else {
+                    if (gameBoardOpponent[hitCoordinates[0] + 1 - k][hitCoordinates[1] + 1].equals("#"))
+                        return false;
+                    else if ((gameBoardOpponent[hitCoordinates[0] + 1 - k][hitCoordinates[1] + 1].equals("–") &&
+                            !gameBoardOpponent[hitCoordinates[0] + 2 - k][hitCoordinates[1] + 1].equals("–"))) {
+                        //++index;
+                        //if (index == 2)
+                        return true;
+                    }
+                }
             }
+            return false;
         }
+        //ship of size 1
         return true;
     }
 
