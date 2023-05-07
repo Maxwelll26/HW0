@@ -396,10 +396,12 @@ public class Main {
                     }
                 }
                 placeA(placingBoard, placeInfoInt, sizeOfShips[i]);
-                if (i != numOfShips.length - 1 && j != numOfShips[i]) {
-                    System.out.println("Your current game board:");
-                    printBoardGame(gameBoard);
+                if (i == numOfShips.length - 1 && j == numOfShips[numOfShips.length - 1] -1) {
+                    continue;
                 }
+                System.out.println("Your current game board:");
+                printBoardGame(gameBoard);
+
             }
         }
     }
@@ -472,8 +474,6 @@ public class Main {
                 // opponent board there should be X
                 System.out.println("That is a hit!");
             }
-            //gameBoardGuessing[hitCoordinates[0]+1][hitCoordinates[1]+1]="V";
-            //gameBoardOpponent[hitCoordinates[0]+1][hitCoordinates[1]+1]="X";
             return false;
         }
         else {
@@ -512,105 +512,194 @@ public class Main {
 
      */
     public static boolean checkIfDrowned(String[][] gameBoardOpponent, int[] hitCoordinates) {
-        int index = 0;
         //if the ship is horizontal
         if (((hitCoordinates[1] - 1 >= 0) && (gameBoardOpponent[hitCoordinates[0] + 1][hitCoordinates[1]].equals("#") ||
                 (gameBoardOpponent[hitCoordinates[0] + 1][hitCoordinates[1]].equals("X")))) ||
-                ((hitCoordinates[1] + 1 <= gameBoardOpponent[0].length - 2) && (gameBoardOpponent[hitCoordinates[0] + 1][hitCoordinates[1] + 2].equals("#") ||
+                ((hitCoordinates[1] + 1 <= gameBoardOpponent[0].length - 2) &&
+                        (gameBoardOpponent[hitCoordinates[0] + 1][hitCoordinates[1] + 2].equals("#") ||
                 (gameBoardOpponent[hitCoordinates[0] + 1][hitCoordinates[1] + 2].equals("X"))))) {
-            //checks the right side of the tile
-            for (int j = 1; j < gameBoardOpponent[0].length - 1 - hitCoordinates[1]; ++j) {
-                if (hitCoordinates[1] == gameBoardOpponent[0].length - 3) {
-                    if (gameBoardOpponent[hitCoordinates[0] + 1][hitCoordinates[1] + 1 + j].equals("#"))
+
+            //if the hit was in the first column
+            if (hitCoordinates[1] == 0) {
+                for (int p = 1; p < gameBoardOpponent[0].length - 2; ++p) {
+                    if (gameBoardOpponent[hitCoordinates[0] + 1][hitCoordinates[1] + 1 + p].equals("#"))
                         return false;
-                    else if ((gameBoardOpponent[hitCoordinates[0] + 1][hitCoordinates[1] + 1 + j].equals("X") &&
-                            !gameBoardOpponent[hitCoordinates[0] + 1][hitCoordinates[1] + j].equals("–"))) {
+                    else if (p == gameBoardOpponent[0].length - 3) {
+                        if ((gameBoardOpponent[hitCoordinates[0] + 1][hitCoordinates[1] + 1 + p].equals("X") &&
+                                !gameBoardOpponent[hitCoordinates[0] + 1][hitCoordinates[1] + p].equals("–")) ||
+                                (gameBoardOpponent[hitCoordinates[0] + 1][hitCoordinates[1] + 1 + p].equals("–") &&
+                                        !gameBoardOpponent[hitCoordinates[0] + 1][hitCoordinates[1] + p].equals("–"))) {
+                            //++index;
+                            break;
+                        }
+                    } else if ((gameBoardOpponent[hitCoordinates[0] + 1][hitCoordinates[1] + 1 + p].equals("–") &&
+                                !gameBoardOpponent[hitCoordinates[0] + 1][hitCoordinates[1] + p].equals("–"))) {
                         //++index;
                         break;
                     }
                 }
-                else {
-                    if (gameBoardOpponent[hitCoordinates[0] + 1][hitCoordinates[1] + 1 + j].equals("#"))
+                return true;
+            }
+
+            //if the hit was in the last column
+            else if (hitCoordinates[1] == gameBoardOpponent[0].length - 2) {
+                for (int q = 1; q < gameBoardOpponent[0].length - 2; ++q) {
+                    if (gameBoardOpponent[hitCoordinates[0] + 1][hitCoordinates[1] + 1 - q].equals("#"))
                         return false;
-                    else if ((gameBoardOpponent[hitCoordinates[0] + 1][hitCoordinates[1] + 1 + j].equals("–") &&
-                            !gameBoardOpponent[hitCoordinates[0] + 1][hitCoordinates[1] + j].equals("–"))) {
-                        //++index;
+                    else if (q == gameBoardOpponent[0].length - 3) {
+                        if ((gameBoardOpponent[hitCoordinates[0] + 1][hitCoordinates[1] + 1 - q].equals("X") &&
+                                !gameBoardOpponent[hitCoordinates[0] + 1][hitCoordinates[1] + 2 - q].equals("–")) ||
+                                ((gameBoardOpponent[hitCoordinates[0] + 1][hitCoordinates[1] + 1 - q].equals("–") &&
+                                        !gameBoardOpponent[hitCoordinates[0] + 1][hitCoordinates[1] + 2 - q].equals("–"))))
+                            break;
+                    } else if ((gameBoardOpponent[hitCoordinates[0] + 1][hitCoordinates[1] + 1 - q].equals("–") &&
+                            !gameBoardOpponent[hitCoordinates[0] + 1][hitCoordinates[1] + 2 - q].equals("–")))
                         break;
-                    }
                 }
+                return true;
             }
-            //checks the left side of the tile
-            for (int k = 1; k < hitCoordinates[1] + 1; ++k) {
-                if (hitCoordinates[1] == 1) {
-                    if (gameBoardOpponent[hitCoordinates[0] + 1][hitCoordinates[1] + 1 - k].equals("#"))
-                        return false;
-                    else if ((gameBoardOpponent[hitCoordinates[0] + 1][hitCoordinates[1] + 1 - k].equals("X") &&
-                            !gameBoardOpponent[hitCoordinates[0] + 1][hitCoordinates[1] + 2 - k].equals("–"))) {
-                        //++index;
-                        //if (index == 2)
-                        return true;
+
+            //otherwise
+            else {
+                //checks the right side of the tile
+                for (int j = 1; j < gameBoardOpponent[0].length - 1 - hitCoordinates[1]; ++j) {
+                    if (hitCoordinates[1] == gameBoardOpponent[0].length - 3) {
+                        if (gameBoardOpponent[hitCoordinates[0] + 1][hitCoordinates[1] + 1 + j].equals("#"))
+                            return false;
+                        else if ((gameBoardOpponent[hitCoordinates[0] + 1][hitCoordinates[1] + 1 + j].equals("X") &&
+                                !gameBoardOpponent[hitCoordinates[0] + 1][hitCoordinates[1] + j].equals("–")) ||
+                                ((gameBoardOpponent[hitCoordinates[0] + 1][hitCoordinates[1] + 1 + j].equals("–") &&
+                                        !gameBoardOpponent[hitCoordinates[0] + 1][hitCoordinates[1] + j].equals("–")))) {
+                            //++index;
+                            break;
+                        }
+                    } else {
+                        if (gameBoardOpponent[hitCoordinates[0] + 1][hitCoordinates[1] + 1 + j].equals("#"))
+                            return false;
+                        else if ((gameBoardOpponent[hitCoordinates[0] + 1][hitCoordinates[1] + 1 + j].equals("–") &&
+                                !gameBoardOpponent[hitCoordinates[0] + 1][hitCoordinates[1] + j].equals("–"))) {
+                            //++index;
+                            break;
+                        }
                     }
                 }
-                else {
-                    if (gameBoardOpponent[hitCoordinates[0] + 1][hitCoordinates[1] + 1 - k].equals("#"))
-                        return false;
-                    else if ((gameBoardOpponent[hitCoordinates[0] + 1][hitCoordinates[1] + 1 - k].equals("–") &&
-                            !gameBoardOpponent[hitCoordinates[0] + 1][hitCoordinates[1] + 2 - k].equals("–"))) {
-                        //++index;
-                        //if (index == 2)
-                        return true;
+
+                //checks the left side of the tile
+                for (int k = 1; k < hitCoordinates[1] + 1; ++k) {
+                    if (hitCoordinates[1] == 1) {
+                        if (gameBoardOpponent[hitCoordinates[0] + 1][hitCoordinates[1] + 1 - k].equals("#"))
+                            return false;
+                        else if ((gameBoardOpponent[hitCoordinates[0] + 1][hitCoordinates[1] + 1 - k].equals("X") &&
+                                !gameBoardOpponent[hitCoordinates[0] + 1][hitCoordinates[1] + 2 - k].equals("–")) ||
+                                ((gameBoardOpponent[hitCoordinates[0] + 1][hitCoordinates[1] + 1 - k].equals("–") &&
+                                        !gameBoardOpponent[hitCoordinates[0] + 1][hitCoordinates[1] + 2 - k].equals("–")))) {
+                            //++index;
+                            //if (index == 2)
+                            return true;
+                        }
+                    } else {
+                        if (gameBoardOpponent[hitCoordinates[0] + 1][hitCoordinates[1] + 1 - k].equals("#"))
+                            return false;
+                        else if ((gameBoardOpponent[hitCoordinates[0] + 1][hitCoordinates[1] + 1 - k].equals("–") &&
+                                !gameBoardOpponent[hitCoordinates[0] + 1][hitCoordinates[1] + 2 - k].equals("–"))) {
+                            //++index;
+                            //if (index == 2)
+                            return true;
+                        }
                     }
                 }
+                return false;
             }
-            return false;
+
             //if the ship is vertical
         } else if (((hitCoordinates[0] - 1 >= 0) && (gameBoardOpponent[hitCoordinates[0]][hitCoordinates[1] + 1].equals("#") ||
                 (gameBoardOpponent[hitCoordinates[0]][hitCoordinates[1] + 1].equals("X")))) ||
                 ((hitCoordinates[0] + 1 <= gameBoardOpponent.length - 2) && (gameBoardOpponent[hitCoordinates[0] + 2][hitCoordinates[1] + 1].equals("#") ||
                         (gameBoardOpponent[hitCoordinates[0] + 2][hitCoordinates[1] + 1].equals("X"))))) {
-            for (int i = 1; i < gameBoardOpponent.length - 1 - hitCoordinates[0]; ++i) {
-                if (hitCoordinates[0] == gameBoardOpponent.length - 3) {
-                    if (gameBoardOpponent[hitCoordinates[0] + 1 + i][hitCoordinates[1] + 1].equals("#"))
+            //if the hit was in the first row
+            if (hitCoordinates[0] == 0) {
+                for (int t = 1; t < gameBoardOpponent.length - 2; ++t) {
+                    if (gameBoardOpponent[hitCoordinates[0] + 1 + t][hitCoordinates[1] + 1].equals("#"))
                         return false;
-                    else if ((gameBoardOpponent[hitCoordinates[0] + 1 + i][hitCoordinates[1] + 1].equals("X") &&
-                            !gameBoardOpponent[hitCoordinates[0] + i][hitCoordinates[1] + 1].equals("–")) ||
-                            (gameBoardOpponent[hitCoordinates[0] + 1 + i][hitCoordinates[1] + 1].equals("–") &&
-                                    !gameBoardOpponent[hitCoordinates[0] + i][hitCoordinates[1] + 1].equals("–"))) {
-                        //++index;
-                        break;
+                    else if (t == gameBoardOpponent.length - 3) {
+                        if ((gameBoardOpponent[hitCoordinates[0] + 1 + t][hitCoordinates[1] + 1].equals("X") &&
+                                !gameBoardOpponent[hitCoordinates[0] + t][hitCoordinates[1] + 1].equals("–")) ||
+                                (gameBoardOpponent[hitCoordinates[0] + 1 + t][hitCoordinates[1] + 1].equals("–") &&
+                                        !gameBoardOpponent[hitCoordinates[0] + t][hitCoordinates[1] + 1].equals("–"))) {
+                            //++index;
+                            break;
+                        }
                     }
-                }
-                else {
-                    if (gameBoardOpponent[hitCoordinates[0] + 1 + i][hitCoordinates[1] + 1].equals("#"))
-                        return false;
-                    else if ((gameBoardOpponent[hitCoordinates[0] + 1 + i][hitCoordinates[1] + 1].equals("–") &&
-                            !gameBoardOpponent[hitCoordinates[0] + i][hitCoordinates[1] + 1].equals("–"))) {
-                        //++index;
+                    else if ((gameBoardOpponent[hitCoordinates[0] + 1 + t][hitCoordinates[1] + 1].equals("–") &&
+                            !gameBoardOpponent[hitCoordinates[0] + t][hitCoordinates[1] + 1].equals("–")))
                         break;
-                    }
                 }
+                return true;
             }
-            for (int k = 1; k < hitCoordinates[0] + 1; ++k) {
-                if (hitCoordinates[0] == 1) {
-                    if (gameBoardOpponent[hitCoordinates[0] + 1 - k][hitCoordinates[1] + 1].equals("#"))
+
+            //if the hit was in the last row
+            else if (hitCoordinates[0] == gameBoardOpponent.length - 2) {
+                for (int r = 1; r < gameBoardOpponent.length - 2; ++r) {
+                    if (gameBoardOpponent[hitCoordinates[0] + 1 - r][hitCoordinates[1] + 1].equals("#"))
                         return false;
-                    else if ((gameBoardOpponent[hitCoordinates[0] + 1 - k][hitCoordinates[1] + 1].equals("X") &&
-                            !gameBoardOpponent[hitCoordinates[0] + 2 - k][hitCoordinates[1] + 1].equals("–")) ||
-                            (gameBoardOpponent[hitCoordinates[0] + 1 - k][hitCoordinates[1] + 1].equals("–") &&
-                                    !gameBoardOpponent[hitCoordinates[0] + 2 - k][hitCoordinates[1] + 1].equals("–"))) {
-                        //++index;
-                        //if (index == 2)
-                        return true;
+                    else if (r == gameBoardOpponent.length - 3) {
+                        if ((gameBoardOpponent[hitCoordinates[0] + 1 - r][hitCoordinates[1] + 1].equals("X") &&
+                                !gameBoardOpponent[hitCoordinates[0] + 2 - r][hitCoordinates[1] + 1].equals("–")) ||
+                                (gameBoardOpponent[hitCoordinates[0] + 1 - r][hitCoordinates[1] + 1].equals("–") &&
+                                        !gameBoardOpponent[hitCoordinates[0] + 2 - r][hitCoordinates[1] + 1].equals("–")))
+                            break;
+                    }
+                    else if ((gameBoardOpponent[hitCoordinates[0] + 1 - r][hitCoordinates[1] + 1].equals("–") &&
+                            !gameBoardOpponent[hitCoordinates[0] + 2 - r][hitCoordinates[1] + 1].equals("–")))
+                        break;
+                }
+                return true;
+            }
+
+            //otherwise
+            else {
+                for (int i = 1; i < gameBoardOpponent.length - 1 - hitCoordinates[0]; ++i) {
+                    if (hitCoordinates[0] == gameBoardOpponent.length - 3) {
+                        if (gameBoardOpponent[hitCoordinates[0] + 1 + i][hitCoordinates[1] + 1].equals("#"))
+                            return false;
+                        else if ((gameBoardOpponent[hitCoordinates[0] + 1 + i][hitCoordinates[1] + 1].equals("X") &&
+                                !gameBoardOpponent[hitCoordinates[0] + i][hitCoordinates[1] + 1].equals("–")) ||
+                                (gameBoardOpponent[hitCoordinates[0] + 1 + i][hitCoordinates[1] + 1].equals("–") &&
+                                        !gameBoardOpponent[hitCoordinates[0] + i][hitCoordinates[1] + 1].equals("–"))) {
+                            //++index;
+                            break;
+                        }
+                    } else {
+                        if (gameBoardOpponent[hitCoordinates[0] + 1 + i][hitCoordinates[1] + 1].equals("#"))
+                            return false;
+                        else if ((gameBoardOpponent[hitCoordinates[0] + 1 + i][hitCoordinates[1] + 1].equals("–") &&
+                                !gameBoardOpponent[hitCoordinates[0] + i][hitCoordinates[1] + 1].equals("–"))) {
+                            //++index;
+                            break;
+                        }
                     }
                 }
-                else {
-                    if (gameBoardOpponent[hitCoordinates[0] + 1 - k][hitCoordinates[1] + 1].equals("#"))
-                        return false;
-                    else if ((gameBoardOpponent[hitCoordinates[0] + 1 - k][hitCoordinates[1] + 1].equals("–") &&
-                            !gameBoardOpponent[hitCoordinates[0] + 2 - k][hitCoordinates[1] + 1].equals("–"))) {
-                        //++index;
-                        //if (index == 2)
-                        return true;
+                for (int k = 1; k < hitCoordinates[0] + 1; ++k) {
+                    if (hitCoordinates[0] == 1) {
+                        if (gameBoardOpponent[hitCoordinates[0] + 1 - k][hitCoordinates[1] + 1].equals("#"))
+                            return false;
+                        else if ((gameBoardOpponent[hitCoordinates[0] + 1 - k][hitCoordinates[1] + 1].equals("X") &&
+                                !gameBoardOpponent[hitCoordinates[0] + 2 - k][hitCoordinates[1] + 1].equals("–")) ||
+                                (gameBoardOpponent[hitCoordinates[0] + 1 - k][hitCoordinates[1] + 1].equals("–") &&
+                                        !gameBoardOpponent[hitCoordinates[0] + 2 - k][hitCoordinates[1] + 1].equals("–"))) {
+                            //++index;
+                            //if (index == 2)
+                            return true;
+                        }
+                    } else {
+                        if (gameBoardOpponent[hitCoordinates[0] + 1 - k][hitCoordinates[1] + 1].equals("#"))
+                            return false;
+                        else if ((gameBoardOpponent[hitCoordinates[0] + 1 - k][hitCoordinates[1] + 1].equals("–") &&
+                                !gameBoardOpponent[hitCoordinates[0] + 2 - k][hitCoordinates[1] + 1].equals("–"))) {
+                            //++index;
+                            //if (index == 2)
+                            return true;
+                        }
                     }
                 }
             }
